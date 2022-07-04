@@ -5,7 +5,7 @@ The following instructions describe how to use and calibrate the lane detection 
 
 1. Place the TurtleBot3 inbetween yellow and white lanes.
 
--  NOTE: The lane detection filters yellow on the left side while filters white on the right side. Be sure that the yellow lane is on the left side of the robot.
+    - NOTE: The lane detection filters yellow on the left side while filters white on the right side. Be sure that the yellow lane is on the left side of the robot.
 
 
 2. `$ roslaunch turtlebot3_gazebo turtlebot3_autorace_2020.launch`
@@ -17,9 +17,9 @@ The following instructions describe how to use and calibrate the lane detection 
 7. Launch the rqt image viewer by selecting Plugins > Cisualization > Image view.
 Multiple rqt plugins can be run.
 8. Display 3 topics at each image viewer
-- /detect/image_lane/compressed
-- /detect/image_yellow_lane_marker/compressed : a yellow range color filtered image.
-- /detect/image_white_lane_marker/compressed : a white range color filtered image.
+    - /detect/image_lane/compressed
+    - /detect/image_yellow_lane_marker/compressed : a yellow range color filtered image.
+    - /detect/image_white_lane_marker/compressed : a white range color filtered image.
 
 9. `$ rosrun rqt_reconfigure rqt_reconfigure`
 10. Click detect_lane then adjust parameters so that yellow and white colors can be filtered properly.
@@ -29,7 +29,7 @@ Multiple rqt plugins can be run.
 12. Close the terminal or terminate with Ctrl + C on rqt_reconfigure and detect_lane terminals.
 
 13. Open a new terminal and launch the lane detect node without the calibration option.
-
-`$ roslaunch turtlebot3_autorace_detect detect_lane.launch`
+    - `$ roslaunch turtlebot3_autorace_detect detect_lane.launch`
+    
 14. Open a new terminal and launch the node below to start the lane following operation.
-`$ roslaunch turtlebot3_autorace_driving turtlebot3_autorace_control_lane.launch`
+    - `$ roslaunch turtlebot3_autorace_driving turtlebot3_autorace_control_lane.launch`
