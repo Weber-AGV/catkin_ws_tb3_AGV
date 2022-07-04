@@ -8,7 +8,7 @@ The following instructions describe how to use and calibrate the lane detection 
     - NOTE: The lane detection filters yellow on the left side while filters white on the right side. Be sure that the yellow lane is on the left side of the robot.
 
 
-2. `$ roslaunch turtlebot3_gazebo tb3_autonomous_op.launch`
+2. `$ roslaunch tb3_gazebo turtlebot3_autorace.launch`
 3. `$ roslaunch tb3_camera intrinsic_camera_calibration.launch`
 4. `$ roslaunch tb3_camera extrinsic_camera_calibration.launch`
 5. `$ roslaunch tb3_detect detect_lane.launch mode:=calibration`
