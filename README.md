@@ -5,7 +5,7 @@ The following instructions describe how to use and calibrate the lane detection 
 
 1. Place the TurtleBot3 inbetween yellow and white lanes.
 
-NOTE: The lane detection filters yellow on the left side while filters white on the right side. Be sure that the yellow lane is on the left side of the robot.
+-  NOTE: The lane detection filters yellow on the left side while filters white on the right side. Be sure that the yellow lane is on the left side of the robot.
 
 
 2. `$ roslaunch turtlebot3_gazebo turtlebot3_autorace_2020.launch`
