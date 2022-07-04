@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/scott/catkin_ws_tb3_AGV/install/setup.sh

@@ -1,0 +1,8 @@
+prefix=/home/scott/catkin_ws_tb3_AGV/install
+
+Name: tb3_core
+Description: Description of tb3_core
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

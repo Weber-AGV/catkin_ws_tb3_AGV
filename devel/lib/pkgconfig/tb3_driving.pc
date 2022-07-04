@@ -1,0 +1,8 @@
+prefix=/home/scott/catkin_ws_tb3_AGV/devel
+
+Name: tb3_driving
+Description: Description of tb3_driving
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: tb3_msgs

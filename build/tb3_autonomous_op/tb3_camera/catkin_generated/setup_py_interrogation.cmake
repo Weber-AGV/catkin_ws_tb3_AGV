@@ -1,0 +1,7 @@
+set(tb3_camera_SETUP_PY_SETUP_MODULE "distutils.core")
+set(tb3_camera_SETUP_PY_VERSION "1.0.0")
+set(tb3_camera_SETUP_PY_SCRIPTS "")
+set(tb3_camera_SETUP_PY_PACKAGES "tb3_camera")
+set(tb3_camera_SETUP_PY_PACKAGE_DIRS "src/tb3_camera")
+set(tb3_camera_SETUP_PY_MODULES "")
+set(tb3_camera_SETUP_PY_MODULE_DIRS "")

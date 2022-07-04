@@ -1,0 +1,8 @@
+prefix=/home/scott/catkin_ws_tb3_AGV/install
+
+Name: tb3_camera
+Description: Description of tb3_camera
+Version: 1.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: dynamic_reconfigure
