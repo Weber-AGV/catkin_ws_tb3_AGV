@@ -8,11 +8,11 @@ The following instructions describe how to use and calibrate the lane detection 
     - NOTE: The lane detection filters yellow on the left side while filters white on the right side. Be sure that the yellow lane is on the left side of the robot.
 
 ```markdown
-2. `$ roslaunch tb3_gazebo turtlebot3_autorace.launch`
-3. `$ roslaunch tb3_camera intrinsic_camera_calibration.launch`
-4. `$ roslaunch tb3_camera extrinsic_camera_calibration.launch`
-5. `$ roslaunch tb3_detect detect_lane.launch mode:=calibration`
-6. `$ rqt`
+`2. $ roslaunch tb3_gazebo turtlebot3_autorace.launch               `
+`3. $ roslaunch tb3_camera intrinsic_camera_calibration.launch      `
+`4. $ roslaunch tb3_camera extrinsic_camera_calibration.launch      `
+`5. $ roslaunch tb3_detect detect_lane.launch mode:=calibration     `
+`6. $ rqt                                                           `
 ```
 7. Launch the rqt image viewer by selecting Plugins > Cisualization > Image view.
 Multiple rqt plugins can be run.
