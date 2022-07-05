@@ -35,18 +35,19 @@ Multiple rqt plugins can be run.
 14. Open a new terminal and launch the node below to start the lane following operation.
     - `$ roslaunch tb3_driving tb3_control_lane.launch`
 
-
+```
 ## alias simulated lane follow
-- `rltba`  -roslaunch tb3_gazebo turtlebot3_autorace.launch
-- `icam`   -roslaunch tb3_camera intrinsic_camera_calibration.launch
-- `ecam`   -roslaunch tb3_camera extrinsic_camera_calibration.launch
-- `detlnc` -roslaunch tb3_detect detect_lane.launch mode:=calibration
-- `rqt`
-- `rqtconfig` -rosrun rqt_reconfigure rqt_reconfigure
-- close rqt_reconfigure and detect lane
-- `detln`   -roslaunch tb3_detect detect_lane.launch
-- `drln`    -roslaunch tb3_driving tb3_control_lane.launch
+1. `rltba`  -roslaunch tb3_gazebo turtlebot3_autorace.launch
+2. `icam`   -roslaunch tb3_camera intrinsic_camera_calibration.launch
+3. `ecam`   -roslaunch tb3_camera extrinsic_camera_calibration.launch
+4. `detlnc` -roslaunch tb3_detect detect_lane.launch mode:=calibration
+5. `rqt`
+6. `rqtconfig` -rosrun rqt_reconfigure rqt_reconfigure
+7. close rqt_reconfigure and detect lane
+8. `detln`   -roslaunch tb3_detect detect_lane.launch
+9. `drln`    -roslaunch tb3_driving tb3_control_lane.launch
 
+```
 
 
 # Lane Detection
