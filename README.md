@@ -37,12 +37,39 @@ Multiple rqt plugins can be run.
 
 
 ## alias simulated lane follow
-- `rltba`
-- `icam`
-- `ecam`
-- `detlnc`
+- `rltba`  -roslaunch tb3_gazebo turtlebot3_autorace.launch
+- `icam`   -roslaunch tb3_camera intrinsic_camera_calibration.launch
+- `ecam`   -roslaunch tb3_camera extrinsic_camera_calibration.launch
+- `detlnc` -roslaunch tb3_detect detect_lane.launch mode:=calibration
 - `rqt`
-- `rqtconfig`
+- `rqtconfig` -rosrun rqt_reconfigure rqt_reconfigure
 - close rqt_reconfigure and detect lane
-- `detln`
-- `drln`
+- `detln`   -roslaunch tb3_detect detect_lane.launch
+- `drln`    -roslaunch tb3_driving tb3_control_lane.launch
+
+
+
+# Lane Detection
+
+1. Place TurtleBot3 between yellow and white lanes.
+    - NOTE: Be sure that yellow lane is placed left side of the robot and White lane is placed right side of the robot.
+2. `roscore`
+3. `tb3cam`
+4. `icama`
+5. `ecama`
+6. `detlnc`
+7. `rqt`
+8. Click plugins > visualization > Image view; Multiple windows will be present
+9. Select three topics at each image view: 
+    - /detect/image_yellow_lane_marker/compressed
+    - /detect/image_lane/compressed
+    - /detect/image_white_lane_marker/compressed
+10. `rqtconfig`
+11. Click Detect Lane then adjust parameters to do line color filtering.
+12. Open lane.yaml file located in turtlebot3_autorace_detect/param/lane/. 
+    - You need to write modified values to the file. This will make the camera set its parameters as you set here from next launching.
+13. Close both rqt_rconfigure and turtlebot3_autorace_detect_lane.
+14. `detlna`
+15. Check if the results come out correctly.
+    - `drln`
+    - `tb3lnch`
