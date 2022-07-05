@@ -2,7 +2,7 @@
 
 Lane detection package that runs on the Remote PC receives camera images either from TurtleBot3 or Gazebo simulation to detect driving lanes and to drive the Turtlebot3 along them.
 The following instructions describe how to use and calibrate the lane detection feature via rqt.
-
+```
 1. Place the TurtleBot3 inbetween yellow and white lanes.
 
     - NOTE: The lane detection filters yellow on the left side while filters white on the right side. Be sure that the yellow lane is on the left side of the robot.
@@ -34,9 +34,13 @@ Multiple rqt plugins can be run.
 
 14. Open a new terminal and launch the node below to start the lane following operation.
     - `$ roslaunch tb3_driving tb3_control_lane.launch`
-
 ```
-## alias simulated lane follow
+
+
+
+# Alias Simulated Lane Follow
+```
+
 1. `rltba`  -roslaunch tb3_gazebo turtlebot3_autorace.launch
 2. `icam`   -roslaunch tb3_camera intrinsic_camera_calibration.launch
 3. `ecam`   -roslaunch tb3_camera extrinsic_camera_calibration.launch
