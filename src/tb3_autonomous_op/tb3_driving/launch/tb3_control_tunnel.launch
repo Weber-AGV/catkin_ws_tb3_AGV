@@ -1,12 +1,12 @@
 <launch>
-  <!-- do export TURTLEBOT3_MODEL=burger before launch turtlebot3_autorace_core.launch -->
+  <!-- do export TURTLEBOT3_MODEL=burger before launch tb3_core.launch -->
   <!-- tunnel control -->
   <!-- Arguments -->
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
   <arg name="map_file" default="$(find tb3_driving)/maps/tunnel.yaml"/>
   <arg name="open_rviz" default="true"/>
 
-  <!-- Turtlebot3 -->
+  <!-- Turtlebot3 TODO check if launch file is correct-->
   <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
     <arg name="model" value="$(arg model)" />
   </include>
