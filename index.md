@@ -1,11 +1,13 @@
-# Intrisic Camera Calibration - Simulated
+# Camera Calibraion
+
+## Intrisic Camera Calibration - Simulated
 ```markdown
 `1. roscore                                                                     `
 `2. roslaunch turtlebot3_autorace_camera raspberry_pi_camera_publish.launch     `
 `3. rqt_image_view                                                              `
 ```
 
-# Intrisic Camera Calibration - On TB3
+## Intrisic Camera Calibration - On TB3
 ```markdown
 # Remote PC
 `1. roscore                                                                                     `
@@ -20,7 +22,7 @@
 8. Copy and paste the data from ost.yaml to camerav2_320x240_30fps.yaml.
 
 ```
-# Alias Intrisic Camera Calibration - On TB3
+## Alias Intrisic Camera Calibration - On TB3
 ```markdown
 # Remote PC
 `1. rc                                                                                          `
