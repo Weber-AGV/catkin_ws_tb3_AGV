@@ -1,2 +1,2 @@
-tb3_autonomous_op/tb3_autonomous_op:tb3_autonomous_op/tb3_camera:tb3_autonomous_op/tb3_core:tb3_autonomous_op/tb3_detect:tb3_autonomous_op/tb3_driving:tb3_autonomous_op/tb3_msgs:tb3_simulations/tb3_fake:tb3_simulations/tb3_gazebo:tb3_simulations/tb3_simulations
+tb3_autonomous_op/tb3_autonomous_op:tb3_autonomous_op/tb3_camera:tb3_autonomous_op/tb3_core:tb3_autonomous_op/tb3_detect:tb3_autonomous_op/tb3_driving:tb3_autonomous_op/tb3_msgs
 -DCATKIN_DEVEL_PREFIX=/home/scott/catkin_ws_tb3_AGV/devel -DCMAKE_INSTALL_PREFIX=/home/scott/catkin_ws_tb3_AGV/install -G Unix Makefiles

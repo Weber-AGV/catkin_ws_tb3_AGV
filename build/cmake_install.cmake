@@ -134,12 +134,9 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/scott/catkin_ws_tb3_AGV/build/tb3_autonomous_op/tb3_autonomous_op/cmake_install.cmake")
   include("/home/scott/catkin_ws_tb3_AGV/build/tb3_autonomous_op/tb3_msgs/cmake_install.cmake")
   include("/home/scott/catkin_ws_tb3_AGV/build/tb3_autonomous_op/tb3_driving/cmake_install.cmake")
-  include("/home/scott/catkin_ws_tb3_AGV/build/tb3_simulations/tb3_simulations/cmake_install.cmake")
   include("/home/scott/catkin_ws_tb3_AGV/build/tb3_autonomous_op/tb3_core/cmake_install.cmake")
   include("/home/scott/catkin_ws_tb3_AGV/build/tb3_autonomous_op/tb3_camera/cmake_install.cmake")
   include("/home/scott/catkin_ws_tb3_AGV/build/tb3_autonomous_op/tb3_detect/cmake_install.cmake")
-  include("/home/scott/catkin_ws_tb3_AGV/build/tb3_simulations/tb3_gazebo/cmake_install.cmake")
-  include("/home/scott/catkin_ws_tb3_AGV/build/tb3_simulations/tb3_fake/cmake_install.cmake")
 
 endif()
 
