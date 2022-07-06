@@ -1,6 +1,6 @@
-# Camera Calibraion
+# Camera Calibration
 
-## Intrisic Camera Calibration - Simulated
+## Camera Imaging Calibration - On TB3 --NO SIM Calibration needed
 ```markdown
 `1. roscore                                                                     `
 `2. roslaunch turtlebot3_autorace_camera raspberry_pi_camera_publish.launch     `
