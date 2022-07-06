@@ -11,7 +11,7 @@
 ```markdown
 # Remote PC
 `1. roscore                                                                                     `
-# SBC                                                                                     
+# SBC                                                                             
 `2. roslaunch turtlebot3_autorace_camera raspberry_pi_camera_publish.launch                     `
 # Remote PC
 `3. roslaunch turtlebot3_autorace_camera intrinsic_camera_calibration.launch mode:=calibration  `
@@ -19,7 +19,11 @@
 5. Click Save to save the intrinsic calibration data.
 6. calibrationdata.tar.gz folder will be created at /tmp folder.
 7. Extract calibrationdata.tar.gz folder, and open ost.yaml.
+        - ` cd /tmp/ `
+        - ` tar -xf -xf calibrationdata.tar.gz  `
+        - ` code ost.yaml `
 8. Copy and paste the data from ost.yaml to camerav2_320x240_30fps.yaml.
+    - ..._camera/calibration/intrisic_calibration/caerav2_320x240fps.yaml
 
 ```
 ## Alias Intrisic Camera Calibration - On TB3
