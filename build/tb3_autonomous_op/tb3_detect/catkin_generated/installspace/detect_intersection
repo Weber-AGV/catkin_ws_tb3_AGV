@@ -23,7 +23,7 @@ import rospy
 import os 
 from enum import Enum
 from std_msgs.msg import UInt8
-from turtlebot3_autorace_msgs.msg import MovingParam
+from tb3_msgs.msg import MovingParam
 
 class DetectIntersection():
     def __init__(self):

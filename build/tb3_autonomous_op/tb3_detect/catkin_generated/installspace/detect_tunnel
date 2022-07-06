@@ -27,7 +27,7 @@ from std_msgs.msg import UInt8
 from geometry_msgs.msg import Twist, PoseStamped, PoseWithCovarianceStamped
 from nav_msgs.msg import Odometry
 from move_base_msgs.msg import MoveBaseActionResult
-from turtlebot3_autorace_msgs.msg import MovingParam
+from tb3_msgs.msg import MovingParam
 
 class DetectTunnel():
     def __init__(self):

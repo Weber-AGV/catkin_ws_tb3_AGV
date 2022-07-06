@@ -24,7 +24,7 @@ import os
 from enum import Enum
 from std_msgs.msg import UInt8, Float64
 from sensor_msgs.msg import LaserScan
-from turtlebot3_autorace_msgs.msg import MovingParam
+from tb3_msgs.msg import MovingParam
 
 class DetectContruction():
     def __init__(self):
