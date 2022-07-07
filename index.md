@@ -42,6 +42,21 @@
 
 ```
 
+## Extrinsic Camera Calibration - On TB3
+```markdown
+# Remote PC
+`1. rsocore `
+# SBC
+`2. roslaunch turtlebot3_autorace_camera raspberry_pi_camera_publish.launch `
+# Remote PC
+`3. roslaunch turtlebot3_autorace_camera intrinsic_camera_calibration.launch mode:=action   `
+`4. roslaunch turtlebot3_autorace_camera extrinsic_camera_calibration.launch mode:=calibration `
+`5. rqt  `
+```
+6. Click plugins > visualization > Image view; Multiple windows will be present.
+7. Select /camera/image_extrinsic_calib/compressed and /camera/image_projected_compensated topics on each monitors.
+
+
 
 
 
