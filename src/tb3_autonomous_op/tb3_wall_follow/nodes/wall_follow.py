@@ -30,7 +30,7 @@ def callback_laser(data):
 def main():
     rospy.init_node('wall_follow')
 
-    sub = rospy.Subscriber('/scan', LaserScan, callback_laser)
+    sub = rospy.Subscriber('/ray', LaserScan, callback_laser)
     rospy.spin()
 
 
