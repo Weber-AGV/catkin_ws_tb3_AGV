@@ -1,0 +1,13 @@
+<package>
+  <description brief="tb3_wall_follow">
+
+     tb3_wall_follow
+
+  </description>
+  <author>Scott Hadzik</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/tb3_wall_follow</url>
+  <depend package="rospy"/>
+
+</package>
