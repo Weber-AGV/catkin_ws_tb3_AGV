@@ -23,12 +23,35 @@ regions = {
     'left':0
 }
 
-state = 0
+state_ = 0
 state_dict = {
     0: 'find the wall',
     1: 'turn left',
     2: 'follow the wall'
 }
+
+def change_state(state):
+    global state_, state_dict
+    if state is not state_:
+        print ('Wall follower - [%s] - %s' % (state, state_dict[state]))
+        state_ = state
+
+def find_wall():
+    msg = Twist()
+    msg.linear.x = 0.2      # Move foward
+    msg.angular.z = -0.3     # Turn Right
+    return msg
+
+def turn_left():
+    msg = Twist()
+    msg.angular.z = 0.3     # Turn Left
+    return msg
+
+def follow_the_wall():
+    msg = Twist()
+    msg.linear.x = 0.5      # Move foward
+    return msg
+
 
 def select_drive_state():
     global regions
@@ -40,34 +63,48 @@ def select_drive_state():
     
     d = DISTANCE_TO_MAINTAIN
 
-    
+    #================================= Front is Open ================================
     if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
         state_description = 'case 1 - nothing'
-        change_state(0)
+        change_state(0) # Find the wall
     
+    #================================= Wall at front================================
     elif regions['front'] < d and regions['front_left'] > d and regions['front_right'] > d:
         state_description = 'case 2 -front'
-        change_state(1)
+        change_state(1) # Turn Left
     
+    #================================= Wall at front right ================================
     elif regions['front'] > d and regions['front_left'] > d and regions['front_right'] < d:
         state_description = 'case 3 - front right'
-        change_state(2)
+        change_state(2) # Follow the wall
     
-    if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
-        state_description = 'case 1 - nothing'
-        change_state(0)
-    if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
-        state_description = 'case 1 - nothing'
-        change_state(0)
-    if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
-        state_description = 'case 1 - nothing'
-        change_state(0)
-    if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
-        state_description = 'case 1 - nothing'
-        change_state(0)
-    if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
-        state_description = 'case 1 - nothing'
-        change_state(0)
+    #================================= Wall at front left ================================
+    elif regions['front'] > d and regions['front_left'] < d and regions['front_right'] > d:
+        state_description = 'case 4 - front left'
+        change_state(0) # Find the wall
+    
+    #================================= Wall at front and front right================================
+    elif regions['front'] < d and regions['front_left'] > d and regions['front_right'] < d:
+        state_description = 'case 5 - front and front right'
+        change_state(1) # Turn Left
+    
+    #================================= Wall at front and front left ================================
+    elif regions['front'] < d and regions['front_left'] < d and regions['front_right'] > d:
+        state_description = 'case 6 - front and front left'
+        change_state(1) # Turn Left
+    
+    #================================= Wall at all front ================================
+    elif regions['front'] < d and regions['front_left'] < d and regions['front_right'] < d:
+        state_description = 'case 7 - front and front left and front right'
+        change_state(1) # Turn Left
+    
+    #================================= Wall at front left and front right ================================
+    elif regions['front'] < d and regions['front_left'] > d and regions['front_right'] < d:
+        state_description = 'case 8 - front left and front right'
+        change_state(0) # Find the wall
+    else:
+        state_description = 'unknown state'
+        rospy.loginfo(regions)
 
 
 
