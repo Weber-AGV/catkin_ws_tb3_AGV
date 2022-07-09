@@ -118,11 +118,10 @@ def laser_callback(data):
         'right':       min(min(data.ranges[265:275]), 10),   # 270 degress +/- 5 degrees
         'front_right': min(min(data.ranges[310:320]), 10)    # 315 degress +/- 5 degrees 
     }
-    for position, range in regions.items():
-        print(position, '\t\t', range)
+    # for position, range in regions.items():
+    #     print(position, '\t\t', range)
 
-    print('==================', '\n')
-    print(data.ranges.index(min(data.ranges)), min(data.ranges))
+    select_drive_state()
 
 def main():
     global vel_publisher
@@ -135,7 +134,7 @@ def main():
         msg = Twist()
         if state_ == 0:
             msg = find_wall()
-        if state_ == 1:
+        elif state_ == 1:
             msg = turn_left()
         elif state_ == 2:
             msg = follow_the_wall()
