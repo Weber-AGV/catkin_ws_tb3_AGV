@@ -8,13 +8,14 @@ import numpy as np
 from std_msgs.msg import Float64
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
+import math
 
 # Laser Parameters
 ANGLE_RANGE = 360           # 360 degree scan
 SCANS_PER_REVOLUTION = 360  # 1 degree increments
 DISTANCE_TO_MAINTAIN = 1.5  # distance to stay from wall
 
-
+vel_publisher = None
 regions = {
     'right':0,
     'front_right':0,
@@ -99,14 +100,12 @@ def select_drive_state():
         change_state(1) # Turn Left
     
     #================================= Wall at front left and front right ================================
-    elif regions['front'] < d and regions['front_left'] > d and regions['front_right'] < d:
+    elif regions['front'] > d and regions['front_left'] < d and regions['front_right'] < d:
         state_description = 'case 8 - front left and front right'
         change_state(0) # Find the wall
     else:
         state_description = 'unknown state'
         rospy.loginfo(regions)
-
-
 
 def laser_callback(data):
     global regions
@@ -125,25 +124,27 @@ def laser_callback(data):
     print('==================', '\n')
     print(data.ranges.index(min(data.ranges)), min(data.ranges))
 
-
 def main():
+    global vel_publisher
+    
     rospy.init_node('wall_follow')
     laser_subscriber = rospy.Subscriber('/scan', LaserScan, laser_callback)
     vel_publisher = rospy.Publisher('cmd_vel', Twist, queue_size=1)
     rate=rospy.Rate(20)
     while not rospy.is_shutdown():
         msg = Twist()
-        if state == 0:
+        if state_ == 0:
             msg = find_wall()
-        if state == 1:
+        if state_ == 1:
             msg = turn_left()
-        elif state == 2:
+        elif state_ == 2:
             msg = follow_the_wall()
         else:
-            rospy.logger('Unknown State!')
-        vel_publisher(msg)
-        rate.sleep()
+            rospy.loginfo('Unknown State!')
 
+        vel_publisher.publish(msg)
+
+        rate.sleep()
 
 if __name__ == '__main__':
     print('Wall following Starting')
