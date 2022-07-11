@@ -79,7 +79,7 @@ def select_drive_state():
     #================================= Wall at front right ================================
     elif regions['front'] > d and regions['front_left'] > d and regions['front_right'] < d:
         state_description = 'case 3 - front right'
-        change_state(2) # Follow the wall with no turning
+        change_state(1) # Follow the wall with no turning
     
     #================================= Wall at front left ================================
     elif regions['front'] > d and regions['front_left'] < d and regions['front_right'] > d:
@@ -94,7 +94,7 @@ def select_drive_state():
     #================================= Wall at front and front left ================================
     elif regions['front'] < d and regions['front_left'] < d and regions['front_right'] > d:
         state_description = 'case 6 - front and front left'
-        change_state(1) # Turn Left
+        change_state(0) # Turn right
     
     #================================= Wall at all front ================================
     elif regions['front'] < d and regions['front_left'] < d and regions['front_right'] < d:
