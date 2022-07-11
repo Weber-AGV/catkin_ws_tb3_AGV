@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import math
 # Author: Scott Hadzik
 from turtle import left
-import rospy
+
 import numpy as np
-from std_msgs.msg import Float64
+import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
-import math
+from std_msgs.msg import Float64
 
 # Laser Parameters
 ANGLE_RANGE = 360           # 360 degree scan
-SCANS_PER_REVOLUTION = 360  # 1 degree increments
-DISTANCE_TO_MAINTAIN = 1.5  # distance to stay from wall
+SCANS_PER_REVOLUTION = 222  # 1.6 degree increments
+DISTANCE_TO_MAINTAIN = .6  # distance to stay from wall
 
 vel_publisher = None
 regions = {
@@ -37,21 +38,22 @@ def change_state(state):
         print ('Wall follower - [%s] - %s' % (state, state_dict[state]))
         state_ = state
 
-def find_wall():
+def find_wall(): #CASE 0
     msg = Twist()
-    msg.linear.x = 0.2      # Move foward
-    msg.angular.z = -0.3     # Turn Right
+    msg.linear.x = 0.15      # Move foward
+    msg.angular.z = -0.4     # Turn Right
     return msg
 
-def turn_left():
+def turn_left(): #CASE 1
     msg = Twist()
-    msg.angular.z = 0.3     # Turn Left
+    msg.angular.z = 0.4     # Turn Left
     return msg
 
-def follow_the_wall():
+def follow_the_wall():#CASE 2
     msg = Twist()
-    msg.linear.x = 0.5      # Move foward
-    return msg
+    msg.linear.x = 0.22      # Move foward
+    msg.angular.z = 0.0     # no turning
+    return msg   
 
 
 def select_drive_state():
@@ -67,7 +69,7 @@ def select_drive_state():
     #================================= Front is Open ================================
     if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
         state_description = 'case 1 - nothing'
-        change_state(0) # Find the wall
+        change_state(0) # Find the wall by turning right
     
     #================================= Wall at front================================
     elif regions['front'] < d and regions['front_left'] > d and regions['front_right'] > d:
@@ -77,7 +79,7 @@ def select_drive_state():
     #================================= Wall at front right ================================
     elif regions['front'] > d and regions['front_left'] > d and regions['front_right'] < d:
         state_description = 'case 3 - front right'
-        change_state(2) # Follow the wall
+        change_state(2) # Follow the wall with no turning
     
     #================================= Wall at front left ================================
     elif regions['front'] > d and regions['front_left'] < d and regions['front_right'] > d:
@@ -106,20 +108,24 @@ def select_drive_state():
     else:
         state_description = 'unknown state'
         rospy.loginfo(regions)
+    print('state_description', state_description)
 
 def laser_callback(data):
     global regions
     regions = {
         'front': data.ranges[0],                             # 0 degress
         
-        'front_left':  min(min(data.ranges[40:50]), 10),     # 45 degress +/- 5 degrees
-        'left':        min(min(data.ranges[85:95]), 10),     # 90 degress +/- 5 degrees
+        'front_left':  min(min(data.ranges[32:38]), 10),     # 45 degress +/- 5 degrees
+        'left':        min(min(data.ranges[60:66]), 10),     # 90 degress +/- 5 degrees 
         
-        'right':       min(min(data.ranges[265:275]), 10),   # 270 degress +/- 5 degrees
-        'front_right': min(min(data.ranges[310:320]), 10)    # 315 degress +/- 5 degrees 
+        'right':       min(min(data.ranges[171:177]), 10),   # 270 degress +/- 5 degrees
+        'front_right': min(min(data.ranges[198:204]), 10)    # 315 degress +/- 5 degrees 
     }
-    # for position, range in regions.items():
-    #     print(position, '\t\t', range)
+    for position, range in regions.items():
+        print(position, '\t\t', range)
+    # print('min',(data.ranges[np.nonzero(data.ranges)]))
+
+    # print('ranges', len(data.ranges))
 
     select_drive_state()
 
@@ -129,7 +135,7 @@ def main():
     rospy.init_node('wall_follow')
     laser_subscriber = rospy.Subscriber('/scan', LaserScan, laser_callback)
     vel_publisher = rospy.Publisher('cmd_vel', Twist, queue_size=1)
-    rate=rospy.Rate(20)
+    rate=rospy.Rate(5)
     while not rospy.is_shutdown():
         msg = Twist()
         if state_ == 0:
@@ -144,6 +150,7 @@ def main():
         vel_publisher.publish(msg)
 
         rate.sleep()
+    # rospy.spin()
 
 if __name__ == '__main__':
     print('Wall following Starting')
