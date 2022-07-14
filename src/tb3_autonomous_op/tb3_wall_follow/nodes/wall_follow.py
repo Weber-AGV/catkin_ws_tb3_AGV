@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+from termios import VEOL
 from threading import currentThread
 # Author: Scott Hadzik
 from turtle import left
@@ -16,6 +17,8 @@ from std_msgs.msg import Float64
 ANGLE_RANGE = 360           # 360 degree scan
 SCANS_PER_REVOLUTION = 222  # 1.6 degree increments
 DISTANCE_TO_MAINTAIN = .3  # distance to stay from wall
+VELOCITY = 0.15
+ANGULAR_VELOCITY = VELOCITY / 1.10 # degree turning vel by 10%
 
 vel_publisher = None
 current_position = None
@@ -43,19 +46,19 @@ def change_state(wall_follow_state):
 
 def find_wall(): #CASE 0
     msg = Twist()
-    msg.linear.x = 0.15      # Move foward
-    msg.angular.z = -0.35     # Turn Right
+    msg.linear.x = VELOCITY     # Move foward
+    msg.angular.z = -ANGULAR_VELOCITY     # Turn Right
     return msg
 
 def turn_left(): #CASE 1
     msg = Twist()
     msg.linear.x = 0.0
-    msg.angular.z = 0.35     # Turn Left
+    msg.angular.z = ANGULAR_VELOCITY     # Turn Left
     return msg
 
 def follow_the_wall():#CASE 2
     msg = Twist()
-    msg.linear.x = 0.15      # Move foward
+    msg.linear.x = VELOCITY      # Move foward
     msg.angular.z = 0.0     # no turning
     return msg   
 
@@ -114,8 +117,42 @@ def select_drive_state():
         rospy.loginfo(regions)
     print('wall_follow_state_description', wall_follow_state_description)
 
+def calculate_distance(side_angle, theta_angle, side_distance, theta_distance):
+    #get a and b
+    a = theta_distance
+    b = side_distance
+    theta_angle = abs(theta_angle - side_angle)
+    theta = math.radians(theta_angle)
+
+    #get alpha
+    numerator = a * math.cos(theta) - b		
+    denominator = a * math.sin(theta)
+    alpha = math.atan(numerator/denominator)# alpha is the angle of the car compared to desired trajectory
+
+	# get AB
+    AB = b * math.cos(alpha) 				# AB is the distance the car is from the wall
+	# get CD
+    AC = VELOCITY                           # AC is the future position of the car if it maintained it's current trajectory
+    CD = AB + AC * math.sin(alpha)			# CD is the future distance the car is from the wall
+	
+    distance = AB
+	#calculate error
+    error = DISTANCE_TO_MAINTAIN - CD 	# error is the difference between the desired trajectory and the current trajectory 
+	
+    print ('    a:', a)
+    print ('    b:', b)
+    print ('theta:', theta)
+    print ('alpha:', alpha)
+    print ('   AB:', AB)
+    print ('   AC:', AC)
+    print ('   CD:', CD)
+    print ('error:', error)
+
+    return error
+
 def laser_callback(data):
     global regions
+
     regions = {
         'front': data.ranges[0],                             # 0 degress
         
@@ -125,13 +162,12 @@ def laser_callback(data):
         'right':       min(min(data.ranges[171:177]), 10),   # 270 degress +/- 5 degrees
         'front_right': min(min(data.ranges[198:204]), 10)    # 315 degress +/- 5 degrees 
     }
-    # for position, range in regions.items():
-        # print(position, '\t\t', range)
-    # print('min',(data.ranges[np.nonzero(data.ranges)]))
 
-    # print('ranges', len(data.ranges))
+    right_side_error = calculate_distance(0,45,regions['right'], regions['front_right'])
+    left_side_error = calculate_distance(0, 45,regions['left'], regions['front_left'])
+    print ('right', right_side_error)
+    
 
-    select_drive_state()
 
 def callback(msg):
     global current_position
