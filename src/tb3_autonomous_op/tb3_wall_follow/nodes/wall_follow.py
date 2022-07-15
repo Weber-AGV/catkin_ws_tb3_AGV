@@ -2,16 +2,20 @@
 # -*- coding: utf-8 -*-
 
 import math
+import time
 from termios import VEOL
+import cv2
 from threading import currentThread
 # Author: Scott Hadzik
 from turtle import left
 
 import numpy as np
+from soupsieve import select
 import rospy
 from geometry_msgs.msg import Twist, PoseWithCovarianceStamped
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Float64
+from line_following import LineFollower
 
 # Laser Parameters
 ANGLE_RANGE = 360           # 360 degree scan
@@ -20,8 +24,13 @@ DISTANCE_TO_MAINTAIN = .3  # distance to stay from wall
 VELOCITY = 0.15
 ANGULAR_VELOCITY = VELOCITY / 1.10 # degree turning vel by 10%
 
+kp = 7
+kd = 0.9
+prev_error = 0
+
 vel_publisher = None
 current_position = None
+
 
 regions = {
     'right':0,
@@ -44,89 +53,82 @@ def change_state(wall_follow_state):
         # print ('Wall follower - [%s] - %s' % (state, wall_follow_state_dict[state]))
         wall_follow_state_ = wall_follow_state
 
-def find_wall(): #CASE 0
+def turn_right(angular_z): #CASE 0
     msg = Twist()
-    msg.linear.x = VELOCITY     # Move foward
-    msg.angular.z = -ANGULAR_VELOCITY     # Turn Right
+    msg.linear.x = ANGULAR_VELOCITY     # Move foward
+    msg.angular.z = -angular_z     # Turn Right
     return msg
 
-def turn_left(): #CASE 1
+def turn_left(angular_z): #CASE 1
     msg = Twist()
-    msg.linear.x = 0.0
-    msg.angular.z = ANGULAR_VELOCITY     # Turn Left
+    msg.linear.x = ANGULAR_VELOCITY
+    msg.angular.z = angular_z     # Turn Left
     return msg
 
-def follow_the_wall():#CASE 2
+def straight():#CASE 2
     msg = Twist()
     msg.linear.x = VELOCITY      # Move foward
     msg.angular.z = 0.0     # no turning
     return msg   
 
 
-def select_drive_state():
+def select_drive_state(error):
     global regions
     msg = Twist()
     linear_x = 0
     angular_z = 0
 
     wall_follow_state_description = ''
-    
-    d = DISTANCE_TO_MAINTAIN
+    global kp
+    global kd
+    global VELOCITY
+    global prev_error
+    global prev_steering_angle  
+    # -------------------- Steering number ---------------
+    # ----- + number steer left  | - number steer right 
+    # ------- Adjust steering error using PD control -------
 
-    #================================= Front is Open ================================
-    if regions['front'] > d and regions['front_left'] > d and regions['front_right'] > d:
-        wall_follow_state_description = 'case 1 - nothing'
-        change_state(0) # Find the wall by turning right
-    
-    #================================= Wall at front================================
-    elif regions['front'] < d and regions['front_left'] > d and regions['front_right'] > d:
-        wall_follow_state_description = 'case 2 -front'
-        change_state(1) # Turn Left
-    
-    #================================= Wall at front right ================================
-    elif regions['front'] > d and regions['front_left'] > d and regions['front_right'] < d:
-        wall_follow_state_description = 'case 3 - front right'
-        change_state(1) # Turn Left
-    
-    #================================= Wall at front left ================================
-    elif regions['front'] > d and regions['front_left'] < d and regions['front_right'] > d:
-        wall_follow_state_description = 'case 4 - front left'
-        change_state(0) # Find the wall
-    
-    #================================= Wall at front and front right================================
-    elif regions['front'] < d and regions['front_left'] > d and regions['front_right'] < d:
-        wall_follow_state_description = 'case 5 - front and front right'
-        change_state(1) # Turn Left
-    
-    #================================= Wall at front and front left ================================
-    elif regions['front'] < d and regions['front_left'] < d and regions['front_right'] > d:
-        wall_follow_state_description = 'case 6 - front and front left'
-        change_state(0) # Turn right
-    
-    #================================= Wall at all front ================================
-    elif regions['front'] < d and regions['front_left'] < d and regions['front_right'] < d:
-        wall_follow_state_description = 'case 7 - front and front left and front right'
-        change_state(1) # Turn Left
-    
-    #================================= Wall at front left and front right ================================
-    elif regions['front'] > d and regions['front_left'] < d and regions['front_right'] < d:
-        wall_follow_state_description = 'case 8 - front left and front right'
-        change_state(0) # Find the wall
+    # Proportional adjustment -- current error
+    steering_kp = kp * error				# The larger the error the larger the correction    
+    print('------------steering kp ---------', steering_kp) 
+    # Derivative adjustment -- future trend of error -- stabalizes
+    steering_kd = kd * (prev_error - error) 
+    print('------------steering kd ---------', steering_kd) 
+    # PD adjusted steering error 
+    steering_angle = steering_kp + steering_kd  
+    # Set maximum thresholds for steering angles
+    if steering_angle > 0.5:
+        steering_angle = 0.5
+    elif steering_angle < -0.5:
+        steering_angle = -0.5   
+    prev_error = error  
+
+    print ("Steering Angle is = %f" % steering_angle)   
+    if steering_angle > .05:
+        msg = turn_right(steering_angle)
+        print('steer right')
+    elif steering_angle < -.05:
+        msg = turn_left(steering_angle)
+        print('steer left')
     else:
-        wall_follow_state_description = 'unknown state'
-        rospy.loginfo(regions)
-    print('wall_follow_state_description', wall_follow_state_description)
-
+        print('straight')
+        msg = straight()
+    vel_publisher.publish(msg) 
+   
 def calculate_distance(side_angle, theta_angle, side_distance, theta_distance):
     #get a and b
     a = theta_distance
     b = side_distance
     theta_angle = abs(theta_angle - side_angle)
     theta = math.radians(theta_angle)
+    print ('theta', theta)
 
     #get alpha
-    numerator = a * math.cos(theta) - b		
+    numerator = a * math.cos(theta) - b	
+    print ('a', a, 'sin(theta)', math.sin(theta))	
     denominator = a * math.sin(theta)
+    print('numerator', numerator)
+    print('denominator', denominator)
     alpha = math.atan(numerator/denominator)# alpha is the angle of the car compared to desired trajectory
 
 	# get AB
@@ -135,20 +137,12 @@ def calculate_distance(side_angle, theta_angle, side_distance, theta_distance):
     AC = VELOCITY                           # AC is the future position of the car if it maintained it's current trajectory
     CD = AB + AC * math.sin(alpha)			# CD is the future distance the car is from the wall
 	
-    distance = AB
 	#calculate error
     error = DISTANCE_TO_MAINTAIN - CD 	# error is the difference between the desired trajectory and the current trajectory 
-	
-    print ('    a:', a)
-    print ('    b:', b)
-    print ('theta:', theta)
-    print ('alpha:', alpha)
-    print ('   AB:', AB)
-    print ('   AC:', AC)
-    print ('   CD:', CD)
+
     print ('error:', error)
 
-    return error
+    return error    
 
 def laser_callback(data):
     global regions
@@ -163,10 +157,20 @@ def laser_callback(data):
         'front_right': min(min(data.ranges[198:204]), 10)    # 315 degress +/- 5 degrees 
     }
 
-    right_side_error = calculate_distance(0,45,regions['right'], regions['front_right'])
-    left_side_error = calculate_distance(0, 45,regions['left'], regions['front_left'])
+    right_side_error = calculate_distance(0.5,45 ,regions['right'], regions['front_right'])
+    left_side_error = calculate_distance(0.5,45 ,regions['left'], regions['front_left'])
     print ('right', right_side_error)
+    print ('left', left_side_error)
+    if right_side_error == np.NAN or right_side_error == None:
+        right_side_error = 0.1
+    if left_side_error == np.NAN or left_side_error == None:
+        left_side_error = 0.1
+
+    centerline_error = left_side_error - right_side_error
     
+    print('centerline error', centerline_error)
+
+    select_drive_state(centerline_error)
 
 
 def callback(msg):
@@ -183,8 +187,9 @@ def main():
     vel_publisher = rospy.Publisher('cmd_vel', Twist, queue_size=1)
     rate=rospy.Rate(5)
     while not rospy.is_shutdown():
-                
-        print(current_position)
+        msg = Twist()
+        vel_publisher.publish(msg) 
+        # print(current_position)
         if current_position is not None:
             if current_position.x > 1.65:   #Wall follow
                 print('wall follow')
